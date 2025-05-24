@@ -1,0 +1,70 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+// Structure to store an item
+struct Item {
+    int value;
+    int weight;
+
+    // Value-to-weight ratio for sorting
+    double ratio() const {
+        return (double)value / weight;
+    }
+};
+
+// Comparator to sort items by descending ratio
+bool compare(Item a, Item b) {
+    return a.ratio() > b.ratio();
+}
+
+double fractionalKnapsack(vector<Item>& items, int capacity) {
+    sort(items.begin(), items.end(), compare);
+
+    double totalValue = 0.0;
+
+    for (Item item : items) {
+        if (capacity == 0) break;
+
+        if (item.weight <= capacity) {
+            // Take full item
+            totalValue += item.value;
+            capacity -= item.weight;
+        } else {
+            // Take fractional part
+            totalValue += item.ratio() * capacity;
+            capacity = 0;
+        }
+    }
+
+    return totalValue;
+}
+
+int main() {
+    int n, capacity;
+    cout << "Enter number of items: ";
+    cin >> n;
+
+    vector<Item> items(n);
+
+    cout << "Enter values of items:\n";
+    for (int i = 0; i < n; i++) {
+        cout << "Value of item " << i + 1 << ": ";
+        cin >> items[i].value;
+    }
+
+    cout << "Enter weights of items:\n";
+    for (int i = 0; i < n; i++) {
+        cout << "Weight of item " << i + 1 << ": ";
+        cin >> items[i].weight;
+    }
+
+    cout << "Enter knapsack capacity: ";
+    cin >> capacity;
+
+    double maxProfit = fractionalKnapsack(items, capacity);
+    cout << "\nMaximum value in knapsack = " << maxProfit << endl;
+
+    return 0;
+}
