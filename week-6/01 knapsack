@@ -1,0 +1,62 @@
+#include <iostream>
+using namespace std;
+
+int max(int a, int b) {
+    return (a > b) ? a : b;
+}
+
+void knapsack(int values[], int weights[], int n, int capacity) {
+    // Create DP table
+    int dp[100][100] = {0};
+
+    // Fill the DP table
+    for (int i = 1; i <= n; i++) {
+        for (int w = 1; w <= capacity; w++) {
+            if (weights[i - 1] <= w) {
+                dp[i][w] = max(dp[i - 1][w], values[i - 1] + dp[i - 1][w - weights[i - 1]]);
+            } else {
+                dp[i][w] = dp[i - 1][w];
+            }
+        }
+    }
+
+    // Print maximum value
+    cout << "Maximum value: " << dp[n][capacity] << endl;
+
+    // Find selected items
+    cout << "Selected items: ";
+    int res = dp[n][capacity];
+    int w = capacity;
+    for (int i = n; i > 0 && res > 0; i--) {
+        if (res != dp[i - 1][w]) {
+            cout << i << " "; // item number
+            res -= values[i - 1];
+            w -= weights[i - 1];
+        }
+    }
+    cout << endl;
+}
+
+int main() {
+    int n, capacity;
+    int values[100], weights[100];
+
+    // Input
+    cout << "Enter number of items: ";
+    cin >> n;
+    cout << "Enter knapsack capacity: ";
+    cin >> capacity;
+
+    cout << "Enter values of the items:\n";
+    for (int i = 0; i < n; i++)
+        cin >> values[i];
+
+    cout << "Enter weights of the items:\n";
+    for (int i = 0; i < n; i++)
+        cin >> weights[i];
+
+    // Run knapsack algorithm
+    knapsack(values, weights, n, capacity);
+
+    return 0;
+}
